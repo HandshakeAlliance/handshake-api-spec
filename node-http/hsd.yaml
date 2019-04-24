@@ -5,7 +5,7 @@ info:
   license:
     name: MIT License
     url: https://opensource.org/licenses/MIT
-  version: 1.0.0
+  version: 0.1.0
 servers:
 - url: http://{domain}:{port}
   description: 'Local HSD node '
@@ -25,7 +25,55 @@ servers:
     port:
       default: "12037"
       description: Port for mainnet Handshake installation
-paths: {}
+paths:
+  /reset:
+    summary: Reset chain to specific height
+    description: This will reset the chain used by the node to the specified height.
+      The node will then begin to rsync the chain from that height to the tip.
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+            examples:
+              Reset Chain to Block 100:
+                value:
+                  height: 100
+        required: true
+      responses:
+        200:
+          description: Returned if the reset is successful
+          content:
+            application/json:
+              schema:
+                type: boolean
+              examples:
+                Successful Reset:
+                  value:
+                    success: true
+        400:
+          description: Returned if the height is poorly formatted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Height too high:
+                  value:
+                    error:
+                      message: Height cannot be greater than chain tip.
+        500:
+          description: Block not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                Block not found:
+                  value:
+                    error:
+                      message: Block not found.
 components:
   schemas:
     info:
@@ -259,3 +307,23 @@ components:
         locktime: 3601
         hex: 00000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0605a1f00100943577000000000014d5ec119a8282446865b4cd82090df4612b0e460d0000110e0000030c6d696e656420627920687364085817336bc6a09544080000000000000000
         confirmations: 2
+    Error:
+      title: Root Type for Error
+      description: Non-standard error thrown by the daemon - i.e. 500
+      type: object
+      properties:
+        message:
+          description: The error message
+          type: string
+        type:
+          description: The specific type of error
+          type: string
+        code:
+          description: The error code
+          type: integer
+      example: |-
+        {
+          "error": {
+            "message": "Block not found."
+          }
+        }
