@@ -1,0 +1,261 @@
+---
+openapi: 3.0.2
+info:
+  title: hsd2
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: http://{domain}:{port}
+  description: 'Local HSD node '
+  variables:
+    domain:
+      default: localhost
+      description: The traditional value if the user has a Handshake node running
+        locally
+    port:
+      default: "13037"
+      description: The variable for testnet
+- url: '{domain}:{port}'
+  description: Mainnet
+  variables:
+    domain:
+      default: localhost
+    port:
+      default: "12037"
+      description: Port for mainnet Handshake installation
+paths: {}
+components:
+  schemas:
+    info:
+      title: Root Type for info
+      description: The root of the info type's schema.
+      type: object
+      properties:
+        version:
+          type: string
+        network:
+          type: string
+        chain:
+          type: object
+          properties:
+            height:
+              format: int32
+              type: integer
+            tip:
+              type: string
+            progress:
+              format: int32
+              type: integer
+        pool:
+          type: object
+          properties:
+            host:
+              type: string
+            port:
+              format: int32
+              type: integer
+            agent:
+              type: string
+            services:
+              type: string
+            outbound:
+              format: int32
+              type: integer
+            inbound:
+              format: int32
+              type: integer
+        mempool:
+          type: object
+          properties:
+            tx:
+              format: int32
+              type: integer
+            size:
+              format: int32
+              type: integer
+        time:
+          type: object
+          properties:
+            uptime:
+              format: int32
+              type: integer
+            system:
+              format: int32
+              type: integer
+            adjusted:
+              format: int32
+              type: integer
+            offset:
+              format: int32
+              type: integer
+        memory:
+          type: object
+          properties:
+            total:
+              format: int32
+              type: integer
+            jsHeap:
+              format: int32
+              type: integer
+            jsHeapTotal:
+              format: int32
+              type: integer
+            nativeHeap:
+              format: int32
+              type: integer
+            external:
+              format: int32
+              type: integer
+      example: |-
+        {
+          "version": "0.0.0",
+          "network": "testnet",
+          "chain": {
+            "height": 3601,
+            "tip": "a06c2b7a61ed896f12fbb552311acebad0d4e8392f08cbd16e1ed946813afd01",
+            "progress": 1
+          },
+          "pool": {
+            "host": "199.185.131.97",
+            "port": 13038,
+            "agent": "/hsd:0.0.0/",
+            "services": "1",
+            "outbound": 8,
+            "inbound": 0
+          },
+          "mempool": {
+            "tx": 0,
+            "size": 0
+          },
+          "time": {
+            "uptime": 5,
+            "system": 1556137851,
+            "adjusted": 1556137851,
+            "offset": 0
+          },
+          "memory": {
+            "total": 64,
+            "jsHeap": 20,
+            "jsHeapTotal": 34,
+            "nativeHeap": 29,
+            "external": 17
+          }
+        }
+    Covenant:
+      title: Root Type for Covenant
+      description: A Covenant that is stored inside of a Transaction
+      type: object
+      properties:
+        type:
+          format: int32
+          description: The numeric type value of the covenant
+          type: integer
+        action:
+          description: The action this covenant takes
+          type: string
+        items:
+          description: An array of the data for this covenant
+          type: array
+          items: {}
+      example:
+        type: 0
+        action: NONE
+        items: []
+    UTXO:
+      title: Root Type for UTXO
+      description: A representation of an Unspent Transaction Output
+      type: object
+      example: |-
+        {
+            "version": 0,
+            "height": 3326,
+            "value": 1999997520,
+            "address": "ts1q4w0y9jaemmk78u66sfk4klufkk5qdr9ly5kuvn",
+            "covenant": {
+              "type": 0,
+              "action": "NONE",
+              "items": []
+            },
+            "coinbase": false,
+            "hash": "c3c404c36a0c78b59cbad20d4466f336bd3e9a99d0fcb7a361bceceacff3911f",
+            "index": 1
+          }
+    Transaction:
+      title: Root Type for Transaction
+      description: The root of the Transaction type's schema.
+      required: []
+      type: object
+      properties:
+        hash:
+          type: string
+        witnessHash:
+          type: string
+        fee:
+          format: int32
+          type: integer
+        rate:
+          format: int32
+          type: integer
+        mtime:
+          format: int32
+          type: integer
+        height:
+          format: int32
+          type: integer
+        time:
+          format: int32
+          type: integer
+        index:
+          format: int32
+          type: integer
+        version:
+          format: int32
+          type: integer
+        inputs:
+          type: array
+          items: {}
+        outputs:
+          type: array
+          items: {}
+        locktime:
+          format: int32
+          type: integer
+        hex:
+          type: string
+        confirmations:
+          format: int32
+          type: integer
+        block:
+          type: string
+      example:
+        hash: a659ea7e126074e0ec41bed48867e388e65bfbc7a1fd6445aaefb0dba457175c
+        witnessHash: fc4ec969d257f5e921fa020f0d240298caf362c058a1480756c25cabe5276813
+        fee: 0
+        rate: 0
+        mtime: 1556137846
+        height: 3601
+        block: a06c2b7a61ed896f12fbb552311acebad0d4e8392f08cbd16e1ed946813afd01
+        time: 1556136594
+        index: 0
+        version: 0
+        inputs:
+        - prevout:
+            hash: "0000000000000000000000000000000000000000000000000000000000000000"
+            index: 4294967295
+          witness:
+          - 6d696e656420627920687364
+          - 5817336bc6a09544
+          - "0000000000000000"
+          sequence: 4037084422
+        outputs:
+        - value: 2000000000
+          address: ts1q6hkprx5zsfzxsed5ekpqjr05vy4su3sdszynaz
+          covenant:
+            type: 0
+            action: NONE
+            items: []
+        locktime: 3601
+        hex: 00000000010000000000000000000000000000000000000000000000000000000000000000ffffffff0605a1f00100943577000000000014d5ec119a8282446865b4cd82090df4612b0e460d0000110e0000030c6d696e656420627920687364085817336bc6a09544080000000000000000
+        confirmations: 2
